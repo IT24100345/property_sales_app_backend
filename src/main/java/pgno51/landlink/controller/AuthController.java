@@ -1,9 +1,6 @@
 package pgno51.landlink.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pgno51.landlink.model.User;
 import pgno51.landlink.repo.UserRepo;
 
@@ -20,6 +17,11 @@ public class AuthController {
     @GetMapping
     public User findByUsername(@RequestParam int id) {
         return userRepo.findById(id).orElse(null);
+    }
+
+    @PostMapping("/create")
+    public User createUser(@RequestBody User user) {
+        return userRepo.save(user);
     }
 
 }
