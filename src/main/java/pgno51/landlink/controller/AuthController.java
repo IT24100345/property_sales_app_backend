@@ -40,6 +40,7 @@ public class AuthController {
     @PostMapping("/create")
     public User createUser(@RequestBody User user) {
 
+        IO.println(user.toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.getRoles().add(Role.ROLE_USER);
 
@@ -47,8 +48,10 @@ public class AuthController {
     }
 
     @PostMapping("/update")
-    public User updateUser(@RequestBody User user) {
-        return userRepo.save(user);
+    public boolean updateUser(@RequestBody User user) {
+        IO.println(user.toString());
+        userRepo.updateUserProfileById(user.getId(), user.getUsername(), user.getEmail());
+        return true;
     }
 
     @PostMapping("/login")
