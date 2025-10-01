@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<User,Integer> {
 
-    @Query("select u from User u where :role = any(u.roles)")
-    List<User> findUsersByRole(String role);
+//    @Query("select u from User u where :role = any(u.roles)")
+//    List<User> findUsersByRole(String role);
 
     Optional<User> findUsersByUsername(String username);
 }
