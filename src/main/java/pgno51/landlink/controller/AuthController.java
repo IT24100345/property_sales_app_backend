@@ -14,6 +14,7 @@ import pgno51.landlink.repo.UserRepo;
 import pgno51.landlink.util.JwtUtil;
 
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,11 +32,13 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping
-    public User findByUsername(@RequestParam int id) {
-        return userRepo.findById(id).orElse(null);
-    }
+    @PostMapping("/me")
+    public ResponseEntity<UserProfile> getCurrentUser() {
 
+        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ResponseEntity.ok(UserProfile.extract(user));
+    }
 
     @PostMapping("/create")
     public User createUser(@RequestBody User user) {
@@ -78,5 +81,11 @@ public class AuthController {
     }
 
     private record LoginRequest(String username,String password) {}
+
+    private record UserProfile(int id, String username, String email, Set<Role> roles) {
+        static UserProfile extract(User user) {
+            return new UserProfile(user.getId(), user.getUsername(), user.getEmail(), user.getRoles());
+        }
+    }
 
 }
