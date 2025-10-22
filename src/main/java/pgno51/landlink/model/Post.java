@@ -45,7 +45,7 @@ public class Post {
     @ManyToOne
     //@JsonBackReference
     @JsonIgnore
-    @JoinColumn(name = "author_id")
+//    @JoinColumn(name = "author_id")
     private User author;
 
     @OneToOne(mappedBy = "post")

@@ -1,5 +1,6 @@
 package pgno51.landlink.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class PremiumPost {
 
     @OneToOne
     @JoinColumn(name = "post_id")
+    @JsonIgnore
     private Post post;
 
     private LocalDateTime expiredAt;

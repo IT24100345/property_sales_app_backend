@@ -7,22 +7,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pgno51.landlink.dto.CreatePostRequest;
-import pgno51.landlink.model.Post;
-import pgno51.landlink.model.PremiumPost;
-import pgno51.landlink.model.User;
-import pgno51.landlink.model.VerificationStatus;
+import pgno51.landlink.model.*;
 import pgno51.landlink.repo.PostRepo;
 import pgno51.landlink.repo.PremiumPostRepo;
+import pgno51.landlink.repo.SavedPostsRepo;
+import pgno51.landlink.repo.UserRepo;
 
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
 
     private final PostRepo postRepo;
+    private final SavedPostsRepo savedPostsRepo;
     private final PremiumPostRepo premiumPostRepo;
 
-    public PostController(PostRepo postRepo, PremiumPostRepo premiumPostRepo) {
+    public PostController(PostRepo postRepo, SavedPostsRepo savedPostsRepo, PremiumPostRepo premiumPostRepo) {
         this.postRepo = postRepo;
+        this.savedPostsRepo = savedPostsRepo;
         this.premiumPostRepo = premiumPostRepo;
     }
 
@@ -34,7 +35,7 @@ public class PostController {
     @GetMapping
     public ResponseEntity<?> getPosts(Authentication authentication) {
         var x = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(postRepo.findAllByAuthor_Id(x.getId()));
+        return ResponseEntity.ok(postRepo.findAllPostsByAuthor_Id(x.getId()));
     }
 
     @PostMapping("/create")
@@ -80,6 +81,20 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getPostById(@PathVariable int id) {
         return ResponseEntity.ok(postRepo.findById(id));
+    }
+
+    @PostMapping("/favourite/{id}")
+    public ResponseEntity<SavedPosts> makeFavourite(@PathVariable int id, Authentication auth) {
+
+        var x = (User) auth.getPrincipal();
+
+        var premPost = new SavedPosts();
+        premPost.setUser(x);
+        premPost.setPostId(id);
+
+        savedPostsRepo.save(premPost);
+
+        return ResponseEntity.ok(premPost);
     }
 
 

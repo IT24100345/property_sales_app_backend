@@ -9,7 +9,9 @@ import java.util.List;
 
 @Repository
 public interface PostRepo extends JpaRepository<Post, Integer> {
-    List<Post> findAllByAuthor_Id(int authorId);
+//    List<Post> findAllByAuthor_Id(int authorId);
 
     List<Post> findAllPostsByVerificationStatus(VerificationStatus verificationStatus);
+
+    List<Post> findAllPostsByAuthor_Id(int authorId);
 }

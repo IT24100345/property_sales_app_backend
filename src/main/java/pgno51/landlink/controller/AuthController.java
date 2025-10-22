@@ -4,15 +4,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pgno51.landlink.model.Role;
+import pgno51.landlink.model.SavedPosts;
 import pgno51.landlink.model.User;
+import pgno51.landlink.repo.SavedPostsRepo;
 import pgno51.landlink.repo.UserRepo;
 import pgno51.landlink.util.JwtUtil;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,12 +25,14 @@ import java.util.Set;
 public class AuthController {
 
     final private UserRepo userRepo;
+    private final SavedPostsRepo savedPostsRepo;
     final private PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public AuthController(UserRepo userRepo, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public AuthController(UserRepo userRepo, SavedPostsRepo savedPostsRepo, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.userRepo = userRepo;
+        this.savedPostsRepo = savedPostsRepo;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -78,6 +84,12 @@ public class AuthController {
                 "email", user.getEmail(),
                 "roles", user.getRoles()
         ));
+    }
+
+    @GetMapping("/saved-posts")
+    public ResponseEntity<List<SavedPosts>> getSaved(Authentication auth) {
+        var x = (User) auth.getPrincipal();
+        return ResponseEntity.ok(savedPostsRepo.findAllByUser_Id(x.getId()));
     }
 
     private record LoginRequest(String username,String password) {}
